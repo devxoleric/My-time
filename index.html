@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Xoleric project </title>
+    <meta name="title" content="Xoleric">
+    <meta name="description" content="Tug'ilganingizdan beri o'tgan har bir sekundni real vaqt rejimida kuzatib boring. aniq vaqt hisoblagichi.">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://devxoleric.github.io/my-time/"> <meta property="og:title" content="Xoleric projects — Hayot Metrikasi">
+    <meta property="og:description" content="Siz qancha vaqt yashadingiz? Yil, oy, kun va millisekundlargacha aniq hisoblang.">
+    <meta property="og:image" content="https://devxoleric.github.io/my-time/preview.png"> <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://devxoleric.github.io/my-time/">
+    <meta property="twitter:title" content="Xoleric projects">
+    <meta property="twitter:description" content="Real vaqt rejimida hayot metrikasini kuzatib boring.">
+    <meta property="twitter:image" content="https://devxoleric.github.io/my-time/preview.png">
+
+    <style>
+        :root {
+            --primary: #00ffaa;
+            --bg: #050505;
+            --card: rgba(255, 255, 255, 0.05);
+            --text: #ffffff;
+        }
+
+        [data-theme="light"] {
+            --primary: #0077ff;
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --text: #1a1a1a;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            transition: 0.3s;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            width: 95%;
+            max-width: 500px;
+            padding: 20px 0 60px 0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .theme-btn {
+            background: var(--card);
+            border: 1px solid rgba(128,128,128,0.2);
+            padding: 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .picker-section {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 28px;
+            border: 1px solid rgba(128,128,128,0.1);
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .wheels {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            height: 120px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .wheel-box {
+            height: 100%;
+            width: 70px;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+        }
+        .wheel-box::-webkit-scrollbar { display: none; }
+
+        .item {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            opacity: 0.2;
+            scroll-snap-align: center;
+            transition: 0.3s ease;
+        }
+        .item.active { opacity: 1; color: var(--primary); transform: scale(1.2); }
+
+        .pointer {
+            position: absolute;
+            top: 40px;
+            left: 5px;
+            right: 5px;
+            height: 40px;
+            background: rgba(128,128,128,0.1);
+            border-radius: 12px;
+            pointer-events: none;
+            border: 1px solid rgba(128,128,128,0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .mini-card {
+            background: var(--card);
+            padding: 18px;
+            border-radius: 22px;
+            border: 1px solid rgba(128,128,128,0.08);
+            display: flex;
+            flex-direction: column;
+            transition: 0.3s;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        .lab { font-size: 0.7rem; text-transform: uppercase; color: #888; font-weight: 600; }
+        .val { font-size: 1.6rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; margin-top: 8px; }
+        .ms { color: var(--primary); font-size: 1rem; }
+
+        .start-btn {
+            width: 100%;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 18px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px var(--shadow);
+            transition: 0.3s;
+        }
+
+        .start-btn:active { transform: scale(0.98); }
+
+        @media (min-width: 400px) {
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .full-width { grid-column: span 3; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+<div class="wrapper">
+    <div class="header">
+        <div>
+            <h1 style="margin:0; font-size:1.6rem;">xoleric Elite</h1>
+            <p style="margin:0; font-size:0.85rem; opacity:0.5;">xisobla</p>
+        </div>
+        <button class="theme-btn" onclick="toggleTheme()" id="tBtn">🌙</button>
+    </div>
+
+    <div class="picker-section">
+        <div class="wheels">
+            <div class="pointer"></div>
+            <div class="wheel-box" id="d-wheel"></div>
+            <div class="wheel-box" id="m-wheel"></div>
+            <div class="wheel-box" id="y-wheel" style="width:100px;"></div>
+        </div>
+        <button class="start-btn" onclick="start()">BOSHLASH</button>
+    </div>
+
+    <div class="stats-grid">
+        <div class="mini-card"><span class="lab">Yil</span><span class="val" id="r-y">0</span></div>
+        <div class="mini-card"><span class="lab">Oy</span><span class="val" id="r-m">0</span></div>
+        <div class="mini-card"><span class="lab">Kun</span><span class="val" id="r-d">0</span></div>
+        <div class="mini-card"><span class="lab">Soat</span><span class="val" id="r-h">0</span></div>
+        <div class="mini-card"><span class="lab">Daqiqa</span><span class="val" id="r-mi">0</span></div>
+        <div class="mini-card"><span class="lab">Hafta</span><span class="val" id="r-w">0</span></div>
+        <div class="mini-card full-width">
+            <span class="lab">Sekund & Millisekund</span>
+            <span class="val"><span id="r-s">00</span><span class="ms" id="res-ms">.000</span></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    const wheels = {
+        d: document.getElementById('d-wheel'),
+        m: document.getElementById('m-wheel'),
+        y: document.getElementById('y-wheel')
+    };
+
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.getElementById('tBtn');
+        if(body.dataset.theme === "dark") {
+            body.dataset.theme = "light";
+            btn.innerText = "🌙";
+        } else {
+            body.dataset.theme = "dark";
+            btn.innerText = "☀️";
+        }
+    }
+
+    function createWheel(el, s, e) {
+        let h = '<div class="item"></div>';
+        for(let i=s; i<=e; i++) h += `<div class="item" data-v="${i}">${i.toString().padStart(2,'0')}</div>`;
+        h += '<div class="item"></div>';
+        el.innerHTML = h;
+        el.onscroll = () => {
+            const boxes = el.querySelectorAll('.item');
+            const center = el.scrollTop + 60;
+            boxes.forEach(box => {
+                if(box.offsetTop < center && box.offsetTop + 40 > center) box.classList.add('active');
+                else box.classList.remove('active');
+            });
+        };
+    }
+
+    createWheel(wheels.d, 1, 31);
+    createWheel(wheels.m, 1, 12);
+    createWheel(wheels.y, 1950, 2025);
+
+    setTimeout(() => { 
+        wheels.y.scrollTop = 1600; 
+        wheels.m.scrollTop = 200;
+    }, 300);
+
+    let timer;
+    function start() {
+        const d = wheels.d.querySelector('.active').dataset.v;
+        const m = wheels.m.querySelector('.active').dataset.v;
+        const y = wheels.y.querySelector('.active').dataset.v;
+        const birth = new Date(y, m-1, d);
+
+        if(timer) cancelAnimationFrame(timer);
+
+        function update() {
+            const diff = Math.abs(new Date() - birth);
+
+            document.getElementById('r-y').innerText = Math.floor(diff / 31557600000);
+            document.getElementById('r-m').innerText = Math.floor((diff / 2629800000) % 12);
+            document.getElementById('r-d').innerText = Math.floor((diff / 86400000) % 30.44);
+            document.getElementById('r-w').innerText = Math.floor(diff / 604800000);
+            document.getElementById('r-h').innerText = Math.floor((diff / 3600000) % 24);
+            document.getElementById('r-mi').innerText = Math.floor((diff / 60000) % 60);
+            document.getElementById('r-s').innerText = Math.floor((diff / 1000) % 60);
+            document.getElementById('res-ms').innerText = "." + (diff % 1000).toString().padStart(3, '0');
+
+            timer = requestAnimationFrame(update);
+        }
+        update();
+    }
+</script>
+
+</body>
+</html>
